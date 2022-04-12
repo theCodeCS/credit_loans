@@ -2,23 +2,23 @@
 --of customer attrition. They want to analyze the data to find out the reason behind this and 
 --leverage the same to predict customers who are likely to drop off.
 select *
-from creditcard_customers
+from credit_loan
 
 --viewing the credit limit per income category
 select *
 from (select income_category, gender, avg(credit_limit)
-	 	from creditcard_customers
+	 	from credit_loan
 	  	group by 1,2
 	 ) as sub
 	 
 --Seeing how many of our customers left
 select sum(case when attrition_flag = 'Attrited Customer' THEN 1
 			ELSE 0 END) as attrition
-from creditcard_customers
+from credit_loan
 
 --we see that most people cancel there card when they are 2-3months inactive
 select months_inactive_12_mon, card_category,count(card_category)
-from creditcard_customers
+from credit_loan
 where attrition_flag = 'Attrited Customer'
 group by 1,2
 order by 3 desc, 1 desc
@@ -26,7 +26,7 @@ order by 3 desc, 1 desc
 --For each card category the months avg out between 2-3months inactivity
 select card_category, avg(months_inactive_12_mon)
 from (select months_inactive_12_mon, card_category,count(card_category)
-		from creditcard_customers
+		from credit_loan
 		where attrition_flag = 'Attrited Customer'
 		group by 1,2
 	 ) as sub
@@ -34,7 +34,7 @@ group by 1
 
 ---Seeing how gender takes into the affect of months since activity
 select card_category,gender, avg(months_inactive_12_mon) as avg_inactive_mon
-from creditcard_customers
+from credit_loan
 where attrition_flag = 'Attrited Customer'
 group by 1, 2
 order by 3 desc
@@ -42,12 +42,12 @@ order by 3 desc
 --Gender of number of customer who attrited
 select COUNT(CASE WHEN gender = 'M' THEN 1 ELSE NULL END) AS n_male,
 		COUNT(CASE WHEN gender = 'F' THEN 1 ELSE NULL END) AS n_female
-from creditcard_customers
+from credit_loan
 where attrition_flag = 'Attrited Customer'
 
 --We see that people with lower income are likely to attrited 
 select income_category, count(*)
-from creditcard_customers
+from credit_loan
 where attrition_flag = 'Attrited Customer'
 group by 1
 order by 2 desc, 1 desc
@@ -55,7 +55,7 @@ order by 2 desc, 1 desc
 -- attrition for inactive month
 select months_inactive_12_mon,
 		count(total_trans_ct)
-from creditcard_customers
+from credit_loan
 where attrition_flag = 'Attrited Customer'
 group by 1
 order by 1
@@ -72,7 +72,7 @@ select months_inactive_12_mon,
 	COUNT(CASE WHEN total_trans_ct BETWEEN 70 AND 79 THEN '70-79' ELSE NULL END) trans_ct_70_79,
 	COUNT(CASE WHEN total_trans_ct BETWEEN 80 AND 89 THEN '80-89' ELSE NULL END) trans_ct_80_89,
 	COUNT(CASE WHEN total_trans_ct BETWEEN 90 AND 99 THEN '90-99' ELSE NULL END) trans_ct_90_99
-from creditcard_customers
+from credit_loan
 where attrition_flag = 'Attrited Customer'
 group by 1
 order by 1
@@ -85,7 +85,7 @@ select CASE WHEN customer_age BETWEEN 20 AND 29 THEN '20-29'
 			WHEN customer_age BETWEEN 60 AND 69 THEN '60-69'
 			ELSE '70+' END AS age,
 		avg(months_inactive_12_mon)
-from creditcard_customers
+from credit_loan
 where attrition_flag = 'Attrited Customer'
 group by 1
 order by 2 desc
@@ -95,7 +95,7 @@ select CASE WHEN customer_age BETWEEN 20 AND 39 THEN '20-39'
 			WHEN customer_age BETWEEN 40 AND 59 THEN '40-59'
 			ELSE '60+' END AS age,
 		avg(months_inactive_12_mon)
-from creditcard_customers
+from credit_loan
 where attrition_flag = 'Attrited Customer'
 group by 1
 order by 2 desc
@@ -108,7 +108,7 @@ select CASE WHEN customer_age BETWEEN 20 AND 39 THEN '20-39'
 		months_inactive_12_mon,
 		income_category,
 		count(*) as n_count
-from creditcard_customers
+from credit_loan
 where attrition_flag = 'Attrited Customer'
 group by 1,2,3
 order by 4 desc
@@ -121,7 +121,7 @@ select CASE WHEN customer_age BETWEEN 20 AND 39 THEN '20-39'
 		income_category,
 		total_relationship_count,
 		count(*) as n_count
-from creditcard_customers
+from credit_loan
 where attrition_flag = 'Attrited Customer'
 group by 1,2,3,4
 order by 5 desc
@@ -135,7 +135,7 @@ select CASE WHEN customer_age BETWEEN 20 AND 39 THEN '20-39'
 		income_category,
 		marital_status,
 		count(*) as n_count
-from creditcard_customers
+from credit_loan
 where attrition_flag = 'Attrited Customer'
 group by 1,2,3,4
 order by 5 desc
@@ -149,7 +149,7 @@ select CASE WHEN credit_limit BETWEEN 0 AND 4999 THEN '<5K'
 			WHEN credit_limit BETWEEN 25000 AND 29999 THEN '25K-30K'
 			ELSE '30K+' END AS cred_limit,
 			avg(months_inactive_12_mon)
-from creditcard_customers
+from credit_loan
 where attrition_flag = 'Attrited Customer'
 group by 1
 order by 2 desc
@@ -167,7 +167,7 @@ select CASE WHEN customer_age BETWEEN 20 AND 39 THEN '20-39'
 			income_category,
 			marital_status,
 			count(*) as n_count
-from creditcard_customers
+from credit_loan
 where attrition_flag = 'Attrited Customer'
 group by 1,2,3,4,5
 order by 6 desc
@@ -180,7 +180,7 @@ select CASE WHEN months_on_book BETWEEN 10 AND 19 THEN '10-19'
 			ELSE '50+' END AS time_with_bank,
 		months_inactive_12_mon,
 		count(*) as n_amt
-from creditcard_customers
+from credit_loan
 where attrition_flag = 'Attrited Customer'
 group by 1,2
 order by 3 desc
@@ -203,7 +203,7 @@ select CASE WHEN customer_age BETWEEN 20 AND 39 THEN '20-39'
 			income_category,
 			marital_status,
 			count(*) as n_count
-from creditcard_customers
+from credit_loan
 where attrition_flag = 'Attrited Customer'
 group by 1,2,3,4,5,6
 order by 7 desc
@@ -219,7 +219,7 @@ select CASE WHEN credit_limit BETWEEN 0 AND 9999 THEN '<10K'
 			ELSE '60+' END AS age,
 		sum(customer_age),
 		count(*)
-from creditcard_customers
+from credit_loan
 where attrition_flag = 'Attrited Customer'
 group by 1,2
 order by 3 desc
